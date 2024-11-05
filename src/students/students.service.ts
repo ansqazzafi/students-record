@@ -8,10 +8,14 @@ import { UpdateStudentDTO } from './update-student-dto';
 export class StudentsService {
     constructor(@InjectModel(Student.name) private studentModel: Model<StudentDocument>) { }
 
-    public async createStudent(createStudentDTO:CreateStudentDTO): Promise<Student> {
+    public async createStudent(createStudentDTO:CreateStudentDTO): Promise<{ message: string, student: Student }> {
         console.log(createStudentDTO);
         const newStudent = await this.studentModel.create(createStudentDTO)
-        return await newStudent.save()
+        const createdStudent = await newStudent.save()
+        return {
+            message:"Student Created Successfully",
+            student:createdStudent
+        }
     }
 
 
@@ -26,24 +30,31 @@ export class StudentsService {
         return FoundStudent
     }
 
-    public async deleteStudent(studentId: string): Promise<Student> {
+    public async deleteStudent(studentId: string): Promise<{ message: string, student: Student }>  {
         const checkStudent = await this.studentModel.findById(studentId);
         if (!checkStudent) {
             throw new NotFoundException("Student not found");
         }
         await this.studentModel.deleteOne({ _id: studentId });
-        return checkStudent;
+        return {
+            message:"Student Deleted Successfully",
+            student : checkStudent
+        };
     }
 
 
-    public async updateStudent(studentId: string, updateStudentDTO: UpdateStudentDTO): Promise<Student> {
+    public async updateStudent(studentId: string, updateStudentDTO: UpdateStudentDTO): Promise<{ message: string, student: Student }>  {
         const foundStudent = await this.studentModel.findById(studentId);
         if (!foundStudent) {
             throw new NotFoundException("Student not found");
         }
 
         Object.assign(foundStudent, updateStudentDTO);
-        return await foundStudent.save();
+         await foundStudent.save();
+         return{
+            message:"Student Updated Successfully",
+            student:foundStudent
+         }
     }
     
 }

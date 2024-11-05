@@ -10,7 +10,7 @@ import { log } from 'console';
 export class StudentsController {
     constructor(private readonly studentService :StudentsService){}
     @Post('createStudent')
-    public async createStudent(@Body() createStudentDTO:CreateStudentDTO): Promise<Student> {
+    public async createStudent(@Body() createStudentDTO:CreateStudentDTO): Promise<{ message: string, student: Student }>  {
         console.log("End Point ");
         
         return await this.studentService.createStudent(createStudentDTO);
@@ -29,7 +29,7 @@ export class StudentsController {
     }
 
     @Delete('deleteStudent/:id')
-    public async deleteStudent(@Param('id') id:string):Promise<Student>{
+    public async deleteStudent(@Param('id') id:string):Promise<{ message: string, student: Student }> {
         return await this.studentService.deleteStudent(id)
     }
 
@@ -37,7 +37,7 @@ export class StudentsController {
     public async updateStudent(
         @Param('id') id: string,
         @Body() updateStudentDTO: UpdateStudentDTO
-    ): Promise<Student> {
+    ): Promise<{ message: string, student: Student }>  {
         return await this.studentService.updateStudent(id, updateStudentDTO);
     }
 }
