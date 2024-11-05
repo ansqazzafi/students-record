@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Student, StudentDocument } from './students.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -8,14 +8,16 @@ import { UpdateStudentDTO } from './update-student-dto';
 export class StudentsService {
     constructor(@InjectModel(Student.name) private studentModel: Model<StudentDocument>) { }
 
-    public async createStudent(createStudentDTO:CreateStudentDTO): Promise<{ message: string, student: Student }> {
-        console.log(createStudentDTO);
-        const newStudent = await this.studentModel.create(createStudentDTO)
-        const createdStudent = await newStudent.save()
-        return {
-            message:"Student Created Successfully",
-            student:createdStudent
+    public async createStudent(createStudentDTO: CreateStudentDTO): Promise<{ message: string, student: Student }> {
+        const existingStudent = await this.studentModel.findOne({ email: createStudentDTO.email });
+        if (existingStudent) {
+            throw new ConflictException("Email already exists");
         }
+        const newStudent = await this.studentModel.create(createStudentDTO);
+        return {
+            message: "Student created successfully",
+            student: newStudent
+        };
     }
 
 
