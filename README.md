@@ -12,7 +12,7 @@ The following are the main API endpoints of the NestJS application for managing 
 - **GET /students/getAllStudents** - Retrieve all students.
 - **POST /students/getOneStudent/:id** - Retrieve a student by their unique ID.
 - **PUT /students/updateStudent/:id** - Update an existing student by their ID.
-- **DELETE /students/deleteStudent:id** - Delete a student by their ID.
+- **DELETE /students/deleteStudent/:id** - Delete a student by their ID.
 
 ---
 
