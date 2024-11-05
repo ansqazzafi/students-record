@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule and ConfigService
 import { Student } from './students/students.entity'; // Assuming this is your interface
 import { StudentSchema } from './students/students.entity'; // Assuming this is your schema
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { StudentSchema } from './students/students.entity'; // Assuming this is 
     MongooseModule.forFeature([{ name: Student.name, schema: StudentSchema }]),
     StudentsModule,
   ],
-  controllers: [StudentsController],
+  controllers: [StudentsController , AppController],
   providers: [StudentsService],
 })
 export class AppModule {}

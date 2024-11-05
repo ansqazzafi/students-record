@@ -1,181 +1,150 @@
-# Week 03 Day 04 Implement routes for adding, updating, and deleting students.
 
-This is a NestJS application that provides a RESTful API for managing student records. The API allows you to create, retrieve, update, and delete student information, including personal details, courses, and grades.
 
-## Features
+# NestJS StudentsRecords API Testing Guide
 
-- Create a new student record
-- Retrieve all student records
-- Retrieve a single student record by ID
-- Update an existing student record
-- Delete a student record
+---
 
-## Technologies Used
+## API Endpoints Overview
 
-- [NestJS](https://nestjs.com/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [MongoDB](https://www.mongodb.com/)
-- [Mongoose](https://mongoosejs.com/)
+The following are the main API endpoints of the NestJS application for managing students:
 
-# Week 03 Day 05 NestJS DTOs and Validation Pipe
+- **POST /students/createStudent** - Create a new student.
+- **GET /students/getAllStudents** - Retrieve all students.
+- **POST /students/getOneStudent/:id** - Retrieve a student by their unique ID.
+- **PUT /students/updateStudent/:id** - Update an existing student by their ID.
+- **DELETE /students/deleteStudent:id** - Delete a student by their ID.
 
-Here’s a focused section for the README that covers the Data Transfer Objects (DTOs) and validation specifically for creating and updating student records which are the tasks of Week 03 Day 05.
+---
 
-````markdown
-## Data Transfer Objects (DTOs) and Validation
 
-This API uses Data Transfer Objects (DTOs) to define the structure and validation rules for the data when creating and updating student records. The `class-validator` library is employed to ensure that incoming data meets the specified requirements.
+## Testing the API
 
-### CreateStudentDto
+### POST - Create Student
 
-The `CreateStudentDto` is used for creating a new student record. The following fields are required:
-
-- `firstName`: The first name of the student (string).
-- `lastName`: The last name of the student (string).
-- `email`: The email address of the student (string, must be a valid email format).
-- `dateOfBirth`: The student's date of birth (string, must be in ISO 8601 format).
-- `address`: An object containing:
-  - `country`: The country of residence (string).
-  - `city`: The city of residence (string).
-  - `location`: The specific address (string).
-- `phoneNumber`: An optional field for the student's phone number (string).
-- `courses`: An array of course objects, each containing:
-  - `name`: The name of the course (string).
-  - `description`: A description of the course (string).
-- `grades`: An array of grade objects, each containing:
-  - `subject`: The subject for which the grade is given (string).
-  - `score`: The numeric score received (number).
-
-### UpdateStudentDto
-
-The `UpdateStudentDTO` is used for updating an existing student record. All fields are optional, allowing for partial updates. The fields are:
-
-- `firstName`: The first name of the student (string).
-- `lastName`: The last name of the student (string).
-- `email`: The email address of the student (string, must be a valid email format).
-- `dateOfBirth`: The student's date of birth (string, must be in ISO 8601 format).
-- `address`: An object containing:
-  - `country`: The country of residence (string).
-  - `city`: The city of residence (string).
-  - `location`: The specific address (string).
-- `phoneNumber`: An optional field for the student's phone number (string).
-- `courses`: An optional array of course objects.
-- `grades`: An optional array of grade objects.
-
-### Validation
-
-Validation is enforced using the `class-validator` library. When a request is made to create or update a student record, the API checks the incoming data against the defined DTOs. If any required fields are missing or if the data types are incorrect, a `400 Bad Request` response will be returned, detailing the validation errors.
-
-Example error response for invalid data:
+- **Endpoint**: `POST /students/createStudent`
+- **Description**: Creates a new student.
+- **Request Body**: 
 
 ```json
 {
-  "message": [
-    "email must be an email",
-    "dateOfBirth must be a valid ISO 8601 date string",
-    "address must be an object",
-    "courses must be an array",
-    "grades must be an array"
+  "firstName": "Salaar",
+  "lastName": "Khan",
+  "email": "salaar.khan@test.com",
+  "dateOfBirth": "2000-06-15T00:00:00.000Z",
+  "address": {
+    "country": "Pakistan",
+    "city": "Karachi",
+    "location": "Clifton"
+  },
+  "phoneNumber": "03211234567",
+  "courses": [
+    {
+      "name": "Mathematics",
+      "description": "Advanced Calculus and Algebra"
+    },
+    {
+      "name": "Computer Science",
+      "description": "Introduction to Programming and Data Structures"
+    }
   ],
-  "error": "Bad Request",
-  "statusCode": 400
+  "grades": [
+    {
+      "subject": "Mathematics",
+      "score": 95
+    },
+    {
+      "subject": "Computer Science",
+      "score": 88
+    }
+  ]
 }
 ```
-````
 
-# Week 03 Day 06 NestJS Custom Exceptions Filters for error handling
+---
 
-## Custom Exception Filter
+### GET - Get All Students
 
-### Purpose
+- **Endpoint**: `GET /students/getAllStudents`
+- **Description**: Retrieves all students.
+- **Response**: 
 
-The `CustomExceptionFilter` is responsible for catching exceptions thrown during the execution of your API methods. It formats error responses in a standard way, providing clients with clear information about any issues that occur.
+```json
+[
+  {
+    "_id": "67285baa51387a697628684e",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "jogn@gmail.com",
+    "dateOfBirth": "2000-01-01T00:00:00.000Z",
+    "address": {
+      "country": "USA",
+      "city": "New York",
+      "location": "123 Main St, Apt 4B"
+    },
+    "phoneNumber": "+1234567890",
+    "courses": [
+      {
+        "name": "Mathematics",
+        "description": "An advanced course in mathematics."
+      },
+      {
+        "name": "History",
+        "description": "A comprehensive study of world history."
+      }
+    ],
+    "grades": [
+      {
+        "subject": "Mathematics",
+        "score": 95
+      },
+      {
+        "subject": "History",
+        "score": 88
+      }
+    ]
+  },
+  ...
+]
+```
 
-### Implementation
+---
 
-1. **Create the Exception Filter**
+### GET - Get Student by ID
 
-   Create a file named `custom-exception.filter.ts` in your project directory.
+- **Endpoint**: `POST /students/getOneStudent/:id`
+- **Description**: Retrieves a student by their unique ID.
+- **Example Request**: `POST /students/getOneStudent/672993a209c369378c9a4af9`
+- **Response**: The response will be a single student object (as shown in the "Create Student" response).
 
-   ```typescript
-   import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-   import { Response } from 'express';
+---
 
-   @Catch()  // This filter will catch all exceptions
-   export class CustomExceptionFilter implements ExceptionFilter {
-     catch(exception: unknown, host: ArgumentsHost) {
-       const ctx = host.switchToHttp();
-       const response = ctx.getResponse<Response>();
-       const status = exception instanceof HttpException
-         ? exception.getStatus()
-         : HttpStatus.INTERNAL_SERVER_ERROR;
+### PUT - Update Student
 
-       const message = exception instanceof HttpException
-         ? exception.getResponse()
-         : 'Internal server error';
-
-       response.status(status).json({
-         statusCode: status,
-         message,
-       });
-     }
-   }
-
-
-2. **Applying the Filter**
-
-   You can apply the `CustomExceptionFilter` globally or at the controller level.
-
-   - **Globally**: In your `main.ts` file, register the filter:
-
-     ```typescript
-     import { NestFactory } from '@nestjs/core';
-     import { AppModule } from './app.module';
-     import { CustomExceptionFilter } from './custom-exception.filter';
-
-     async function bootstrap() {
-       const app = await NestFactory.create(AppModule);
-       app.useGlobalPipes(
-         new ValidationPipe({
-           whitelist: true,
-           forbidNonWhitelisted: true,
-           transform: true,
-         }),
-       );
-       app.useGlobalFilters(new CustomExceptionFilter());
-       await app.listen(3000);
-     }
-     bootstrap();
-     ```
-
-   - **At the Controller Level**: You can also apply it to specific controllers:
-
-     ```typescript
-     import { Controller, UseFilters } from '@nestjs/common';
-     import { CustomExceptionFilter } from './custom-exception.filter';
-
-     @Controller('students')
-     @UseFilters(CustomExceptionFilter)
-     export class StudentsController {
-       // Controller methods...
-     }
-     ```
-
-### Example Response
-
-When an error occurs, the filter will catch it and return a structured JSON response. For instance, if an invalid request is made, the response might look like:
+- **Endpoint**: `PUT /students/updateStudent/:id`
+- **Description**: Updates the information of an existing student by their ID.
+- **Request Body**: 
 
 ```json
 {
-  "statusCode": 400,
-  "message": "Validation failed: email must be an email"
+  "email":"example@gmail.com"
 }
 ```
 
-### Benefits
 
-- **Consistency**: All error responses follow a uniform structure.
-- **Clarity**: Clients receive clear messages indicating what went wrong.
-- **Ease of Maintenance**: Centralized error handling makes it easier to manage and update error responses.
+---
 
+### DELETE - Delete Student
+
+- **Endpoint**: `DELETE /students/deleteStudent/:id`
+- **Description**: Deletes a student by their ID.
+- **Example Request**: `DELETE /students/deleteStudent/672993a209c369378c9a4af9`
+- **Response**:
+
+```json
+{
+  "message": "Student deleted successfully"
+}
+```
+
+---
 
